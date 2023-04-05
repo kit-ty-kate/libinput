@@ -113,6 +113,7 @@ ModelAppleTouchpad=1
 AttrSizeHint=104x75
 AttrTouchSizeRange=150:130
 AttrPalmSizeThreshold=1600
+AttrPalmExclusionZonesDisable=1
 
 [Apple Laptop Keyboard (MTP)]
 MatchUdevType=keyboard
