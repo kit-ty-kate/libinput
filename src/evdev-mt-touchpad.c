@@ -3446,6 +3446,9 @@ static void
 tp_init_palmdetect(struct tp_dispatch *tp,
 		   struct evdev_device *device)
 {
+	struct quirks_context *quirks;
+	struct quirks *q;
+	bool palm_exclusion_zones_disabled;
 
 	tp->palm.right_edge = INT_MAX;
 	tp->palm.left_edge = INT_MIN;
@@ -3466,7 +3469,14 @@ tp_init_palmdetect(struct tp_dispatch *tp,
 				    ABS_MT_TOOL_TYPE))
 		tp->palm.use_mt_tool = true;
 
-	if (!tp_is_tablet(device))
+	quirks = evdev_libinput_context(device)->quirks;
+	q = quirks_fetch_for_device(quirks, device->udev_device);
+	if (!tp_is_tablet(device) &&
+	    !(q &&
+	      quirks_get_bool(q,
+			      QUIRK_ATTR_PALM_EXCLUSION_ZONES_DISABLE,
+			      &palm_exclusion_zones_disabled) &&
+	      palm_exclusion_zones_disabled))
 		tp_init_palmdetect_edge(tp, device);
 	tp_init_palmdetect_pressure(tp, device);
 	tp_init_palmdetect_size(tp, device);
